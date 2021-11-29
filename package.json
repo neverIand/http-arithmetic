@@ -8,7 +8,9 @@
     "test": "nodemon ./src/app.js"
   },
   "keywords": [
-    "api"
+    "api",
+    "Math",
+    "Http"
   ],
   "author": "Yizhe Tang",
   "license": "ISC",
