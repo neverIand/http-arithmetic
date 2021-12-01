@@ -2,11 +2,12 @@
 
 <ol>
         <li>Please ensure that Node.js is installed in your computer. If not, you can download it from its <a target="_blank" href="https://nodejs.org/">official website</a>.</li>
-        <li>Clone the repository: <code>git clone http-arithmetic</code> and then <code>cd http-arithmetic</code></li>
+        <li>Clone the repository: <code>git clone https://github.com/neverIand/http-arithmetic.git</code> and then <code>cd http-arithmetic</code></li>
         <li>run <code>npm install</code> under the project directory</li>
         <li>run <code>npm start</code></li>
         <li>The application is now running on port 3000.</li>
       </ol>
+
 
 <h1>Request format</h1>
 
