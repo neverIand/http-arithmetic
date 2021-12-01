@@ -10,7 +10,7 @@ app.use(bodyParser.json())
 // app.use(bodyParser.urlencoded({extended:false}))
 
 app.all('*', function (req, res, next) {
-  console.log(`received request from: ${req.headers.origin}`)
+  // console.log(`received request from: ${req.headers.origin}`)
   res.header('Access-Control-Allow-Origin', req.headers.origin)
   res.header('Access-Control-Allow-Headers', 'content-type')
   res.header('Access-Control-Allow-Methods', 'PUT,POST,DELETE,GET,OPTIONS')
@@ -24,7 +24,6 @@ app.all('*', function (req, res, next) {
   }
 })
 
-// TODO: Error handling e.g. /divide/4 (partially done)
 app.get('/add/:num1/:num2', function (req, res, next) {
   // console.log(req.headers)
   //let params = transformParams(req.params.num1, req.params.num2)
@@ -50,37 +49,59 @@ app.get('/divide/:num1/:num2', function (req, res, next) {
 
 // Extended: handling POST request
 app.post('/', function (req, res, next) {
-  let r = 0
-
-  switch (req.body.operation) {
-    case 'add':
-      r = add(req.body.arguments[0], req.body.arguments[1])
-      break
-    case 'subtract':
-      r = subtract(req.body.arguments[0], req.body.arguments[1])
-      break
-    case 'multiply':
-      r = multiply(req.body.arguments[0], req.body.arguments[1])
-      break
-    case 'divide':
-      r = divide(req.body.arguments[0], req.body.arguments[1])
-      break
+  console.log(req.body)
+  let operation = req.body.operation.toLowerCase()
+  let arguments = req.body.arguments
+  
+  if (operation && arguments) {
+    if (arguments.length>2) {
+      let error = new Error('Bad Request: Only 2 arguments supported')
+        error.httpStatusCode = 400
+        throw error
+    }
+    let r = 0
+    switch (operation) {
+      case 'add':
+        r = add(arguments[0], arguments[1])
+        break
+      case 'subtract':
+        r = subtract(arguments[0], arguments[1])
+        break
+      case 'multiply':
+        r = multiply(arguments[0], arguments[1])
+        break
+      case 'divide':
+        r = divide(arguments[0], arguments[1])
+        break
+      default:
+        let error = new Error('Bad Request: Unsupported operation')
+        error.httpStatusCode = 400
+        // return next(error)
+        throw error
+    }
+    res.json({ result: r })
+  } else {
+    let error = new Error('Bad Request: Missing parameters')
+    error.httpStatusCode = 400
+    // return next(error)
+    throw error
   }
-
-  res.json({ result: r })
 })
 
 // if matches none of the above
 app.all('*', (req, res) => {
-  let error = new Error('Content not exist')
+  let message = 'Content does not exist or missing parameters.'
+  // let message = `Content does not exist or missing parameters. Please check ${req.headers.host+'/Testbed.html'} for more information`
+  let error = new Error(message)
   error.httpStatusCode = 404
   // return next(error)
   throw error
 })
 
-// global error handler
+// global error handler, handles any error thrown previously
 app.use((err, req, res, next) => {
   //console.error(err.stack)
+  console.log(`${err.message}`)
   let output = {
     status: err.httpStatusCode,
     message: err.message,
@@ -93,7 +114,9 @@ function transformParams(param1, param2) {
   console.log(`num1: ${param1}, num2: ${param2}`)
   if (!param1 || !param2) {
     // Check empty value, currently not working
-    let error = new Error('Bad Request: Missing Parameters')
+    let error = new Error(
+      'Bad Request: Missing parameters, there should be 2 arguments'
+    )
     error.httpStatusCode = 400
     // return next(error)
     throw error
@@ -102,7 +125,7 @@ function transformParams(param1, param2) {
   let num2 = Number(param2)
   // console.log(`Converted num1: ${num1}, num2: ${num2}`)
   if (isNaN(num1) || isNaN(num2)) {
-    let error = new Error('Bad Request: Invalid Parameters')
+    let error = new Error('Bad Request: Invalid arguments, arguments should be a numerical value')
     error.httpStatusCode = 400
     // return next(error)
     throw error
@@ -117,17 +140,17 @@ function add(a, b) {
 }
 
 function subtract(a, b) {
-  return a - b
+  return transformParams(a, b)[0] - transformParams(a, b)[1]
 }
 
 function multiply(a, b) {
-  return a * b
+  return transformParams(a, b)[0] * transformParams(a, b)[1]
 }
 
 function divide(a, b) {
   if (transformParams(a, b)[1] === 0) {
-    let error = new Error('Bad Request: Zero Division')
-    error.httpStatusCode = 400
+    let error = new Error('Bad Request: Zero division')
+    error.httpStatusCode = 500
     //return next(error)
     throw error
   }
