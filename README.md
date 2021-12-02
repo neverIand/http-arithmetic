@@ -47,7 +47,7 @@
             <td>/subtract</td>
             <td>Returns the quotient of two numbers <br />(number1 / number2)
             </td>
-            <td>http://localhost:3000/add/1/2</td>
+            <td>http://localhost:3000/divide/10/5</td>
           </tr>
         </tbody>
       </table>
