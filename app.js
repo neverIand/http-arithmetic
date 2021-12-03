@@ -55,7 +55,11 @@ app.get('/divide/:num1/:num2', function (req, res, next) {
 
 // Extended: handling POST request
 app.post('/', function (req, res, next) {
-  console.log(req.body)
+  if (req.headers['content-type']!='application/json') {
+     let error = new Error('Unsupported Media Type: Only json is allowed for POST request')
+    error.httpStatusCode = 415
+    throw error
+  }
   let operation = req.body.operation.toLowerCase()
   let arguments = req.body.arguments
   
