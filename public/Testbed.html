@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>draft</title>
+    <title>Default Page</title>
   </head>
   <body>
     <style>
@@ -23,6 +23,10 @@
         border-bottom: 1px solid black;
       }
 
+      li{
+        margin: 10px 0;
+      }
+
       code {
         font-family: Consolas, Monaco, monospace !important;
       }
@@ -33,11 +37,30 @@
         border-collapse: collapse;
       }
 
+      thead th{
+        border: 1px solid black;
+      }
+
       td {
         border: 1px solid black;
       }
 
+      #readme {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        /* justify-content: center; */
+        /* align-items: center; */
+        margin-top: 10px;
+        width: 600px;
+        /* min-width: 300px; */
+        /* height: 400px; */
+        /* border: 1px solid black; */
+      }
+
       #container {
+        
         position: relative;
         display: flex;
         flex-direction: column;
@@ -45,27 +68,46 @@
         justify-content: center;
         align-items: center;
         margin-top: 10px;
-        min-width: 300px;
+        width: 600px;
+        /* min-width: 300px; */
         /* height: 400px; */
+        border: 1px solid black;
+      }
+
+      #result{
+        width: 400px;
+        margin: 10px;
+        box-sizing: border-box;
         border: 1px solid black;
       }
     </style>
     <div id="readme">
-      <h1>How to use</h1>
+      <h1>How to get started</h1>
 
       <ol>
-        <li>Please ensure that Node.js is installed in your computer. If not, you can download it from its <a target="_blank" href="https://nodejs.org/">official website</a>.</li>
-        <li>Clone the repository: <code>git clone https://github.com/neverIand/http-arithmetic.git</code> and then <code>cd http-arithmetic</code></li>
+        <li>
+          If you want to run this project locally, please ensure that <a target="_blank" href="https://nodejs.org/">Node.js</a> is installed in your computer and follow the instruction below. Otherwise you can just skip to <a href="#request-format"> Request Format</a>.
+         
+        </li>
+        <li>
+          Clone the repository:
+          <code
+            >git clone https://github.com/neverIand/http-arithmetic.git</code
+          >
+          and then <code>cd http-arithmetic</code>
+        </li>
         <li>run <code>npm install</code> under the project directory</li>
         <li>run <code>npm start</code></li>
         <li>The application is now running on port 3000.</li>
       </ol>
 
-      <h1>Request format</h1>
+      <h1 id="request-format">Request format</h1>
 
       <h2>Base URL</h2>
 
-      <p><code>http://localhost:3000</code></p>
+      <p>Local: <code>http://localhost:3000</code></p>
+
+      <p>Remote: <code>http://tangyizhe.com:3000</code></p>
 
       <h2>Endpoints for GET request</h2>
 
@@ -127,10 +169,35 @@
           </tr>
         </tbody>
       </table>
+
+      <h2>Errors</h2>
+
+      <p>
+        By deault, HTTP status code won't be displayed, which means status code
+        for all normal response is 200. Otherwise, for any error, you will get
+        the response with status code and error message in json format. Example:
+      </p>
+
+      <p>
+
+      
+      <pre>
+        <code>
+{
+  "status": 500
+  "message": "Internal Server Error: Zero division"
+}
+        </code>
+      </pre>
+    </p>
     </div>
 
-    <div id="container">
+    <div id="container" style="display: none;">
+      <h3>Result:</h3>
+      <div id="result"></div>
       <form action="" method="post">
+        <input type="number" name="number1" value="0" id="number1" />
+
         <!-- <p>Operation:</p> -->
         <select name="operation" id="operation">
           <option value="add">add</option>
@@ -138,18 +205,16 @@
           <option value="multiply">multiply</option>
           <option value="divide" selected>divide</option>
         </select>
-
-        <input type="number" name="number1" value="0" id="number1" />
         <input type="number" name="number2" value="0" id="number2" />
       </form>
-      <button id="button">button</button>
-      <h3>Result:</h3>
-      <div id="result"></div>
+      <button id="button">POST</button>
+      
     </div>
 
     <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
     <script>
-      // TODO: add form
+      const url = 'http://tangyizhe.com:3000'
+      const localhost = 'http://localhost:3000'
 
       $('#button').click(function () {
         let operation = $('#operation').val()
@@ -159,7 +224,7 @@
 
         $.ajax({
           contentType: 'application/json;charset=utf-8',
-          url: 'http://localhost:3000/',
+          url: url,
           method: 'post',
           data: JSON.stringify(targetData),
           // dataType: 'JSON',
@@ -170,6 +235,7 @@
           },
           success: function (res) {
             console.log(res)
+
             $('#result').html('<p>' + res.result + '</p>')
           },
         })

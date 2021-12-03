@@ -3,8 +3,10 @@ const app = express()
 const port = 3000
 
 let bodyParser = require('body-parser')
+const { response } = require('express')
 // if contentType is 'application/json'
 app.use(bodyParser.json())
+// app.use('', express.static('./public'))
 
 // if contentType is 'application/x-www-form-urlencoded'
 // app.use(bodyParser.urlencoded({extended:false}))
@@ -15,7 +17,7 @@ app.all('*', function (req, res, next) {
   res.header('Access-Control-Allow-Headers', 'content-type')
   res.header('Access-Control-Allow-Methods', 'PUT,POST,DELETE,GET,OPTIONS')
   res.header('X-Powered-By', '3.2.1')
-  res.header('Content-Type', 'application/json;charset=utf-8')
+  //res.header('Content-Type', 'application/json;charset=utf-8')
   if (req.method.toLowerCase() === 'options') {
     // quickly returns options requests
     res.sendStatus(200)
@@ -24,11 +26,15 @@ app.all('*', function (req, res, next) {
   }
 })
 
+app.get('/', function (req, res, next) {
+  res.setHeader('Content-Type', 'text/html');
+  res.sendFile(`${__dirname}/public/Testbed.html`)
+})
+
+
 app.get('/add/:num1/:num2', function (req, res, next) {
-  // console.log(req.headers)
-  //let params = transformParams(req.params.num1, req.params.num2)
-  //let result = add(params[0], params[1])
   let result = add(req.params.num1, req.params.num2)
+  //console.log(res.getHeaders())
   res.set('Content-Type', 'text/plain').send(result + '')
 })
 
@@ -90,7 +96,7 @@ app.post('/', function (req, res, next) {
 
 // if matches none of the above
 app.all('*', (req, res) => {
-  let message = 'Content does not exist or missing parameters.'
+  let message = 'Content does not exist or invalid parameters. Check https://github.com/neverIand/http-arithmetic/blob/master/README.md for more information.'
   // let message = `Content does not exist or missing parameters. Please check ${req.headers.host+'/Testbed.html'} for more information`
   let error = new Error(message)
   error.httpStatusCode = 404
@@ -149,7 +155,7 @@ function multiply(a, b) {
 
 function divide(a, b) {
   if (transformParams(a, b)[1] === 0) {
-    let error = new Error('Bad Request: Zero division')
+    let error = new Error('Internal Server Error: Zero division')
     error.httpStatusCode = 500
     //return next(error)
     throw error
@@ -158,3 +164,5 @@ function divide(a, b) {
 }
 
 app.listen(port, () => console.log(`App listening on port ${port}!`))
+
+

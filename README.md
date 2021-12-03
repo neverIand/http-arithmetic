@@ -8,7 +8,6 @@
         <li>The application is now running on port 3000.</li>
       </ol>
 
-
 <h1>Request format</h1>
 
 <h2>Base URL</h2>
@@ -74,3 +73,22 @@
           </tr>
         </tbody>
       </table>
+
+<h2>Errors</h2>
+
+<p>
+        By deault, HTTP status code won't be displayed, which means status code
+        for all normal response is 200. Otherwise, for any error, you will get
+        the response with status code and error message in json format. Example:
+      </p>
+
+<p>
+<pre>
+<code>
+{
+  "status": 500
+  "message": "Internal Server Error: Zero division"
+}
+</code>
+</pre>
+</p>
