@@ -27,10 +27,9 @@ app.all('*', function (req, res, next) {
 })
 
 app.get('/', function (req, res, next) {
-  res.setHeader('Content-Type', 'text/html');
+  res.setHeader('Content-Type', 'text/html')
   res.sendFile(`${__dirname}/public/Testbed.html`)
 })
-
 
 app.get('/add/:num1/:num2', function (req, res, next) {
   let result = add(req.params.num1, req.params.num2)
@@ -55,52 +54,77 @@ app.get('/divide/:num1/:num2', function (req, res, next) {
 
 // Extended: handling POST request
 app.post('/', function (req, res, next) {
-  if (req.headers['content-type']!='application/json') {
-     let error = new Error('Unsupported Media Type: Only json is allowed for POST request')
+  if (Object.keys(req.body).length === 0) {
+    let error = new Error('Bad Request: Empty request body')
+    error.httpStatusCode = 400
+    throw error
+  }
+
+  if (req.headers['content-type'] != 'application/json') {
+    let error = new Error(
+      'Unsupported Media Type: Only json is allowed for POST request'
+    )
     error.httpStatusCode = 415
     throw error
   }
-  let operation = req.body.operation.toLowerCase()
-  let arguments = req.body.arguments
-  
-  if (operation && arguments) {
-    if (arguments.length>2) {
-      let error = new Error('Bad Request: Only 2 arguments supported')
-        error.httpStatusCode = 400
-        throw error
+
+  // convert the body to an array so that we can toLowercase()could be used
+  let bodyArr = []
+  for (let key in req.body) {
+    if (typeof key === 'string') {
+      bodyArr.push({
+        name: key.toLowerCase(),
+        value: req.body[key],
+      })
+    } else {
+      bodyArr.push({
+        name: key,
+        value: req.body[key],
+      })
     }
-    let r = 0
-    switch (operation) {
-      case 'add':
-        r = add(arguments[0], arguments[1])
-        break
-      case 'subtract':
-        r = subtract(arguments[0], arguments[1])
-        break
-      case 'multiply':
-        r = multiply(arguments[0], arguments[1])
-        break
-      case 'divide':
-        r = divide(arguments[0], arguments[1])
-        break
-      default:
-        let error = new Error('Bad Request: Unsupported operation')
-        error.httpStatusCode = 400
-        // return next(error)
-        throw error
-    }
-    res.json({ result: r })
-  } else {
-    let error = new Error('Bad Request: Missing parameters')
-    error.httpStatusCode = 400
-    // return next(error)
-    throw error
   }
+
+  // An array of objects
+  // console.log(`bodyArrStringfy: ${JSON.stringify(bodyArr)}`)
+
+  // convert the array to a map to remove duplicate attributes
+  // note that if there's duplicate, the latter elements will overwrite the previous ones
+  let map = new Map()
+  for (let i = 0; i < bodyArr.length; i++) {
+    map.set(bodyArr[i].name,bodyArr[i].value)
+  }
+
+  console.log(map);
+
+  let r = 0
+  let arguments=map.get('arguments')
+  switch (map.get('operation').toLowerCase()) {
+    case 'add':
+      r = add(arguments[0], arguments[1])
+      break
+    case 'subtract':
+      r = subtract(arguments[0], arguments[1])
+      break
+    case 'multiply':
+      r = multiply(arguments[0], arguments[1])
+      break
+    case 'divide':
+      r = divide(arguments[0], arguments[1])
+      break
+    default:
+      let error = new Error('Bad Request: Unsupported operation')
+      error.httpStatusCode = 400
+      // return next(error)
+      throw error
+  }
+  res.json({ result: r })
+
 })
 
 // if matches none of the above
 app.all('*', (req, res) => {
-  let message = 'Content does not exist or invalid parameters. Check https://github.com/neverIand/http-arithmetic/blob/master/README.md for more information.'
+  let message =
+    'Content does not exist or invalid parameters. Check https://github.com/neverIand/http-arithmetic/blob/master/README.md for more information.'
   // let message = `Content does not exist or missing parameters. Please check ${req.headers.host+'/Testbed.html'} for more information`
   let error = new Error(message)
   error.httpStatusCode = 404
@@ -121,25 +145,27 @@ app.use((err, req, res, next) => {
 
 /* Check and transform parameters */
 function transformParams(param1, param2) {
-  console.log(`num1: ${param1}, num2: ${param2}`)
+  console.log(`num1: ${param1, typeof param1}, num2: ${param2, typeof param2}`)
   if (!param1 || !param2) {
-    // Check empty value, currently not working
     let error = new Error(
       'Bad Request: Missing parameters, there should be 2 arguments'
     )
     error.httpStatusCode = 400
-    // return next(error)
     throw error
   }
-  let num1 = Number(param1)
-  let num2 = Number(param2)
-  // console.log(`Converted num1: ${num1}, num2: ${num2}`)
-  if (isNaN(num1) || isNaN(num2)) {
-    let error = new Error('Bad Request: Invalid arguments, arguments should be a numerical value')
+  
+  if (typeof (param1)!='number' || typeof(param2)!='number') {
+    let error = new Error(
+      'Bad Request: Invalid arguments, arguments should be a numerical value'
+    )
     error.httpStatusCode = 400
-    // return next(error)
     throw error
   }
+
+  const num1 = Number(param1)
+  const num2 = Number(param2)
+
+  console.log(`Converted num1: ${num1}, num2: ${num2}`)
 
   return [num1, num2]
 }
@@ -168,5 +194,3 @@ function divide(a, b) {
 }
 
 app.listen(port, () => console.log(`App listening on port ${port}!`))
-
-
