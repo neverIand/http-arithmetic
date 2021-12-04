@@ -108,21 +108,29 @@ app.post('/', function (req, res, next) {
     )
     error.httpStatusCode = 400
     throw error
-  }
+    }
+
+    // find all the numerical values in arguments
+    let validArgs = []
+    for (let i = 0; i < arguments.length; i++) {
+      if (typeof arguments[i]==='number') {
+        validArgs.push(arguments[i])
+      }
+    }
  
     let r = 0
     switch (operation) {// only the first two arguments will be involved in the operation
     case 'add':
-      r = add(arguments[0], arguments[1])
+      r = add(validArgs[0], validArgs[1])
       break
     case 'subtract':
-      r = subtract(arguments[0], arguments[1])
+      r = subtract(validArgs[0], validArgs[1])
       break
     case 'multiply':
-      r = multiply(arguments[0], arguments[1])
+      r = multiply(validArgs[0], validArgs[1])
       break
     case 'divide':
-      r = divide(arguments[0], arguments[1])
+      r = divide(validArgs[0], validArgs[1])
       break
     default:
       let error = new Error('Bad Request: Unsupported operation')
@@ -166,6 +174,7 @@ app.use((err, req, res, next) => {
 function transformParams(param1, param2) {
   console.log(`num1: ${param1, typeof param1}, num2: ${param2, typeof param2}`)
   
+  // type check for GET request
   if (typeof (param1)!='number' || typeof(param2)!='number') {
     let error = new Error(
       'Bad Request: Invalid arguments, arguments should be a numerical value'
