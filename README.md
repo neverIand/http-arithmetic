@@ -108,8 +108,8 @@
 <pre>
 
 {
-  "status": 500
-  "message": "Internal Server Error: Zero division"
+    "status": 500
+    "message": "Internal Server Error: Zero division"
 }
 </pre>   
 
