@@ -28,7 +28,7 @@ app.all('*', function (req, res, next) {
 
 app.get('/', function (req, res, next) {
   res.setHeader('Content-Type', 'text/html')
-  res.sendFile(`${__dirname}/public/Testbed.html`)
+  res.sendFile(`${__dirname}/public/Index.html`)
 })
 
 app.get('/add/:num1/:num2', function (req, res, next) {
@@ -110,7 +110,7 @@ app.post('/', function (req, res, next) {
     throw error
     }
 
-    // find all the numerical values in arguments
+    // find all the numerical values in arguments (POST)
     let validArgs = []
     for (let i = 0; i < arguments.length; i++) {
       if (typeof arguments[i]==='number') {
@@ -173,18 +173,19 @@ app.use((err, req, res, next) => {
 /* Check and transform parameters */
 function transformParams(param1, param2) {
   console.log(`num1: ${param1, typeof param1}, num2: ${param2, typeof param2}`)
+
+  // convert to number
+  const num1 = Number(param1)
+  const num2 = Number(param2)
   
   // type check for GET request
-  if (typeof (param1)!='number' || typeof(param2)!='number') {
+  if (isNaN(num1) || isNaN(num2)) {
     let error = new Error(
       'Bad Request: Invalid arguments, arguments should be a numerical value'
     )
     error.httpStatusCode = 400
     throw error
   }
-
-  const num1 = Number(param1)
-  const num2 = Number(param2)
 
   console.log(`Converted num1: ${num1}, num2: ${num2}`)
 
@@ -193,25 +194,29 @@ function transformParams(param1, param2) {
 
 /* Arithmetric functions */
 function add(a, b) {
-  return transformParams(a, b)[0] + transformParams(a, b)[1]
+  const params=transformParams(a, b)
+  return params[0] + params[1]
 }
 
 function subtract(a, b) {
-  return transformParams(a, b)[0] - transformParams(a, b)[1]
+  const params=transformParams(a, b)
+  return params[0] - params[1]
 }
 
 function multiply(a, b) {
-  return transformParams(a, b)[0] * transformParams(a, b)[1]
+  const params=transformParams(a, b)
+  return params[0] * params[1]
 }
 
 function divide(a, b) {
-  if (transformParams(a, b)[1] === 0) {
+  const params=transformParams(a, b)
+  if (params[1] === 0) {
     let error = new Error('Internal Server Error: Zero division')
     error.httpStatusCode = 500
     //return next(error)
     throw error
   }
-  return transformParams(a, b)[0] / transformParams(a, b)[1]
+  return params[0] / params[1]
 }
 
 app.listen(port, () => console.log(`App listening on port ${port}!`))
