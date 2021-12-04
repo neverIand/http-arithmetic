@@ -54,11 +54,11 @@ app.get('/divide/:num1/:num2', function (req, res, next) {
 
 // Extended: handling POST request
 app.post('/', function (req, res, next) {
-  if (Object.keys(req.body).length === 0) {
-    let error = new Error('Bad Request: Empty request body')
-    error.httpStatusCode = 400
-    throw error
-  }
+  // if (Object.keys(req.body).length === 0) {
+  //   let error = new Error('Bad Request: Empty request body')
+  //   error.httpStatusCode = 400
+  //   throw error
+  // }
 
   if (req.headers['content-type'] != 'application/json') {
     let error = new Error(
@@ -96,9 +96,22 @@ app.post('/', function (req, res, next) {
 
   console.log(map);
 
-  let r = 0
-  let arguments=map.get('arguments')
-  switch (map.get('operation').toLowerCase()) {
+  // check whether the necessary parameters exist
+  if (map.has('arguments') && map.has('operation')) {
+    
+    let operation=map.get('operation').toLowerCase()
+    let arguments = map.get('arguments')
+    
+    if (arguments.length<2) {
+    let error = new Error(
+      'Bad Request: Missing parameters, there should be 2 arguments'
+    )
+    error.httpStatusCode = 400
+    throw error
+  }
+ 
+    let r = 0
+    switch (operation) {// only the first two arguments will be involved in the operation
     case 'add':
       r = add(arguments[0], arguments[1])
       break
@@ -118,14 +131,20 @@ app.post('/', function (req, res, next) {
       throw error
   }
   res.json({ result: r })
-
+  } else {
+    let error = new Error(
+      'Bad Request: Missing necessary parameters'
+    )
+    error.httpStatusCode = 400
+    throw error
+  }
 })
 
 // if matches none of the above
 app.all('*', (req, res) => {
   let message =
     'Content does not exist or invalid parameters. Check https://github.com/neverIand/http-arithmetic/blob/master/README.md for more information.'
-  // let message = `Content does not exist or missing parameters. Please check ${req.headers.host+'/Testbed.html'} for more information`
+
   let error = new Error(message)
   error.httpStatusCode = 404
   // return next(error)
@@ -146,13 +165,6 @@ app.use((err, req, res, next) => {
 /* Check and transform parameters */
 function transformParams(param1, param2) {
   console.log(`num1: ${param1, typeof param1}, num2: ${param2, typeof param2}`)
-  if (!param1 || !param2) {
-    let error = new Error(
-      'Bad Request: Missing parameters, there should be 2 arguments'
-    )
-    error.httpStatusCode = 400
-    throw error
-  }
   
   if (typeof (param1)!='number' || typeof(param2)!='number') {
     let error = new Error(
