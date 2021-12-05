@@ -89,12 +89,12 @@
           </tr>
           <tr>
             <td>arguments</td>
-            <td>[number1 number2]</td>
+            <td>[number1, number2]</td>
           </tr>
         </tbody>
       </table>
 
-<p><strong>Please note that only the first two numerical values in arguments array will be involved in the calculation. Arguments like <code>"1.14"</code> and <code>true</code> (boolean value) will not be counted as number. If there is less than two numerical values in the array, it will raise an error.</strong>
+<p><strong>Please note that only the first two numerical values in arguments array will be involved in the calculation. Arguments like <code>"1.14"</code> and <code>true</code> (boolean value) will not be counted as number (This statement sounds redundant but in javascript boolean values could also be treated as number). If there is less than two numerical values in the array, it will raise an error.</strong>
       </p>
 
 <h2>Errors</h2>

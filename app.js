@@ -6,7 +6,6 @@ let bodyParser = require('body-parser')
 const { response } = require('express')
 // if contentType is 'application/json'
 app.use(bodyParser.json())
-// app.use('', express.static('./public'))
 
 // if contentType is 'application/x-www-form-urlencoded'
 // app.use(bodyParser.urlencoded({extended:false}))
