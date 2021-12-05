@@ -116,6 +116,14 @@ app.post('/', function (req, res, next) {
         validArgs.push(arguments[i])
       }
     }
+
+    if (validArgs.length<2) {
+    let error = new Error(
+      'Bad Request: Missing parameters, there should be 2 valid arguments'
+    )
+    error.httpStatusCode = 400
+    throw error
+    }
  
     let r = 0
     switch (operation) {// only the first two arguments will be involved in the operation
