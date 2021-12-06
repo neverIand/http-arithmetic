@@ -123,7 +123,6 @@
       </p>
 
 <pre>
-
 {
     "status": 500
     "message": "Internal Server Error: Zero division"
@@ -132,7 +131,6 @@
 
 
 <pre>
-        
 {
     "status": 400,
     "message": "Bad Request: Invalid arguments, arguments should be a numerical value"
