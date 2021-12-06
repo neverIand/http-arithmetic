@@ -126,6 +126,7 @@ app.post('/', function (req, res, next) {
     }
  
     let r = 0
+    // Putting switch here means that the operation will be checked after checking arguments
     switch (operation) {// only the first two arguments will be involved in the operation
     case 'add':
       r = add(validArgs[0], validArgs[1])

@@ -97,6 +97,23 @@
 <p><strong>Please note that only the first two numerical values in arguments array will be involved in the calculation. Arguments like <code>"1.14"</code> and <code>true</code> (boolean value) will not be counted as number (This statement sounds redundant but in javascript boolean values could also be treated as number). If there is less than two numerical values in the array, it will raise an error.</strong>
       </p>
 
+<p style="color: red;"><strong>
+        Also, if there is any duplicate parameters in request body, the latter param will overwrite the previous ones. E.g. if the request body looks like:
+      </strong>
+      <p>
+      <pre>
+        <code>
+{
+    "arguments": [1,2],
+    "operation": "add",
+    "operation": "divide"
+}
+        </code>
+      </pre>
+    </p>
+    <strong>Then the effective parameter for operation would be "divide".</strong>
+      </p>
+
 <h2>Errors</h2>
 
   <p>
