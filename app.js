@@ -1,6 +1,16 @@
 const express = require('express')
+const http = require("http")
+const https = require("https")
+const fs = require("fs")
 const app = express()
-const port = 3000
+// const port = 3000
+const port=443
+
+// Configuare https
+const httpsOption = {
+    key : fs.readFileSync("./https/privkey.pem"),
+    cert: fs.readFileSync("./https/fullchain.pem")
+}
 
 let bodyParser = require('body-parser')
 const { response } = require('express')
@@ -227,4 +237,6 @@ function divide(a, b) {
   return params[0] / params[1]
 }
 
-app.listen(port, () => console.log(`App listening on port ${port}!`))
+// app.listen(port, () => console.log(`App listening on port ${port}!`))
+http.createServer(app).listen(80)
+https.createServer(httpsOption, app).listen(443)
