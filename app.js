@@ -6,7 +6,7 @@ const app = express()
 const port = 3000
 // const port = 443
 
-// Configuare https
+// configure https
 const httpsOption = {
     key : fs.readFileSync("./https/privkey.pem"),
     cert: fs.readFileSync("./https/fullchain.pem")
@@ -237,6 +237,6 @@ function divide(a, b) {
   return params[0] / params[1]
 }
 
-app.listen(port, () => console.log(`App listening on port ${port}!`))
+// app.listen(port, () => console.log(`App listening on port ${port}!`))
 // http.createServer(app).listen(port)
-// https.createServer(httpsOption, app).listen(443)
+https.createServer(httpsOption, app).listen(port)
